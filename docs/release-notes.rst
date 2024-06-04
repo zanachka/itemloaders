@@ -5,6 +5,28 @@
 Release notes
 =============
 
+.. _release-1.3.1:
+
+itemloaders 1.3.1 (2024-06-03)
+------------------------------
+
+-   Fixed an error when using nested loaders with empty matches that was
+    introduced in 1.3.0 (:gh:`88`)
+
+.. _release-1.3.0:
+
+itemloaders 1.3.0 (2024-05-30)
+------------------------------
+
+-   Added support for method chaining to the ``add_*`` and ``replace_*``
+    methods, so you can now write code such as
+    ``loader.add_xpath("name", "//body/text()").add_value("url", "http://example.com")``
+    (:gh:`81`)
+
+-   Added type hints and ``py.typed`` (:gh:`80`, :gh:`83`)
+
+-   Made the docs builds reproducible (:gh:`82`)
+
 .. _release-1.2.0:
 
 itemloaders 1.2.0 (2024-04-18)
@@ -113,9 +135,9 @@ itemloaders 1.0.1 (2020-07-02)
 
 -   Lowered some minimum dependency versions (:gh:`10`):
 
-    -   :doc:`parsel <parsel:index>`: 1.5.2 → 1.5.0
+    -   ``parsel``: 1.5.2 → 1.5.0
 
-    -   :doc:`w3lib <w3lib:index>`: 1.21.0 → 1.17.0
+    -   ``w3lib``: 1.21.0 → 1.17.0
 
 -   Improved the README file (:gh:`9`)
 

@@ -5,7 +5,7 @@ with open("README.rst") as f:
 
 setup(
     name="itemloaders",
-    version="1.2.0",
+    version="1.3.1",
     url="https://github.com/scrapy/itemloaders",
     project_urls={
         "Documentation": "https://itemloaders.readthedocs.io/",
@@ -18,6 +18,9 @@ setup(
     author_email="opensource@zyte.com",
     license="BSD",
     packages=find_packages(exclude=("tests", "tests.*")),
+    package_data={
+        "itemadapter": ["py.typed"],
+    },
     include_package_data=True,
     zip_safe=False,
     classifiers=[
@@ -39,7 +42,6 @@ setup(
     install_requires=[
         # before updating these versions, be sure they are not higher than
         # scrapy's requirements
-        "w3lib>=1.17.0",
         "parsel>=1.5.0",
         "jmespath>=0.9.5",
         "itemadapter>=0.1.0",

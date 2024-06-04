@@ -12,7 +12,6 @@
 # serve to show the default.
 
 import sys
-from datetime import datetime
 from os import path
 
 import sphinx_rtd_theme
@@ -50,7 +49,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "itemloaders"
-copyright = "2020–{}, Zyte Group Ltd".format(datetime.now().year)
+copyright = "Zyte Group Ltd"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -231,5 +230,4 @@ intersphinx_mapping = {
     "parsel": ("https://parsel.readthedocs.io/en/stable/", None),
     "python": ("https://docs.python.org/3", None),
     "scrapy": ("https://docs.scrapy.org/en/latest/", None),
-    "w3lib": ("https://w3lib.readthedocs.io/en/latest", None),
 }

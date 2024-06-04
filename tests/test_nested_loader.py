@@ -28,6 +28,7 @@ class SubselectorLoaderTest(unittest.TestCase):
         nl = loader.nested_xpath("//header")
         nl.add_xpath("name", "div/text()")
         nl.add_css("name_div", "#id")
+        assert nl.selector
         nl.add_value("name_value", nl.selector.xpath('div[@id = "id"]/text()').getall())
 
         self.assertEqual(loader.get_output_value("name"), ["marta"])
@@ -49,6 +50,7 @@ class SubselectorLoaderTest(unittest.TestCase):
         nl = loader.nested_css("header")
         nl.add_xpath("name", "div/text()")
         nl.add_css("name_div", "#id")
+        assert nl.selector
         nl.add_value("name_value", nl.selector.xpath('div[@id = "id"]/text()').getall())
 
         self.assertEqual(loader.get_output_value("name"), ["marta"])
@@ -115,3 +117,13 @@ class SubselectorLoaderTest(unittest.TestCase):
         self.assertEqual(item["name"], ["marta"])
         self.assertEqual(item["url"], ["http://www.scrapy.org"])
         self.assertEqual(item["image"], ["/images/logo.png"])
+
+    def test_nested_empty_selector(self):
+        loader = ItemLoader(selector=self.selector)
+        nested_xpath = loader.nested_xpath("//bar")
+        assert isinstance(nested_xpath, ItemLoader)
+        nested_xpath.add_xpath("foo", "./foo")
+
+        nested_css = loader.nested_css("bar")
+        assert isinstance(nested_css, ItemLoader)
+        nested_css.add_css("foo", "foo")
