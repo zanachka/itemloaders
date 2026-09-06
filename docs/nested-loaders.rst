@@ -43,3 +43,10 @@ Example::
 You can nest loaders arbitrarily and they work with either xpath or css selectors.
 As a general guideline, use nested loaders when they make your code simpler but do
 not go overboard with nesting or your parser can become difficult to read.
+
+Nested loaders inherit the parent's processor context, including values such as
+``response``. Keyword arguments passed to ``nested_xpath()`` or ``nested_css()``
+override inherited values. Each loader has its own context mapping, so assigning
+a context key does not change the parent's or a sibling's mapping. Context values
+are shallow-copied: referenced objects are shared. The nested selector replaces
+the parent's selector, while the item and collected field values remain shared.

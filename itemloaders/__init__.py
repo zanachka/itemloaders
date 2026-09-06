@@ -169,10 +169,13 @@ class ItemLoader:
         with this :class:`ItemLoader`. The nested loader shares the item
         with the parent :class:`ItemLoader` so calls to :meth:`add_xpath`,
         :meth:`add_value`, :meth:`replace_value`, etc. will behave as expected.
+        Processor context is shallow-copied from the parent, with supplied
+        keyword arguments overriding inherited values.
         """
         self._check_selector_method()
         assert self.selector is not None
         selector = self.selector.xpath(xpath)
+        context = self._get_nested_context(context)
         context.update(selector=selector)
         return self.__class__(item=self.item, parent=self, **context)
 
@@ -183,12 +186,26 @@ class ItemLoader:
         with this :class:`ItemLoader`. The nested loader shares the item
         with the parent :class:`ItemLoader` so calls to :meth:`add_xpath`,
         :meth:`add_value`, :meth:`replace_value`, etc. will behave as expected.
+        Processor context is shallow-copied from the parent, with supplied
+        keyword arguments overriding inherited values.
         """
         self._check_selector_method()
         assert self.selector is not None
         selector = self.selector.css(css)
+        context = self._get_nested_context(context)
         context.update(selector=selector)
         return self.__class__(item=self.item, parent=self, **context)
+
+    def _get_nested_context(self, context: dict[str, Any]) -> dict[str, Any]:
+        # Item and selector are structural arguments supplied by the nested
+        # loader methods, rather than inherited processor context values.
+        inherited = {
+            key: value
+            for key, value in self.context.items()
+            if key not in {"item", "selector"}
+        }
+        inherited.update(context)
+        return inherited
 
     def add_value(
         self,
