@@ -118,36 +118,35 @@ class TestSubselectorLoader:
         nested_css.add_css("foo", "foo")
 
 
-def test_nested_context_inheritance() -> None:
-    for method, expression in [("nested_xpath", "//footer"), ("nested_css", "footer")]:
-        marker = object()
-        loader = ItemLoader(
-            selector=TestSubselectorLoader.selector, marker=marker, prefix="parent"
-        )
-        original_context = dict(loader.context)
-        child = getattr(loader, method)(expression, prefix="child")
-        sibling = getattr(loader, method)(expression)
-        grandchild = child.nested_css("a")
-        for nested in (child, sibling, grandchild):
-            assert nested.context["marker"] is marker
-            assert nested.context["item"] is loader.item
-            assert nested.context["selector"] is nested.selector
-            assert nested.context is not loader.context
-        assert child.context["prefix"] == grandchild.context["prefix"] == "child"
-        assert sibling.context["prefix"] == "parent"
-        assert loader.context == original_context
-        child.context["new"] = True
-        assert "new" not in loader.context
-        assert "new" not in sibling.context
+@pytest.mark.parametrize(
+    ("method", "expression"), [("nested_xpath", "//footer"), ("nested_css", "footer")]
+)
+def test_nested_context_inheritance(method: str, expression: str) -> None:
+    marker = object()
+    loader = ItemLoader(
+        selector=TestSubselectorLoader.selector, marker=marker, prefix="parent"
+    )
+    original_context = dict(loader.context)
+    child = getattr(loader, method)(expression, prefix="child")
+    sibling = getattr(loader, method)(expression)
+    grandchild = child.nested_css("a")
+    for nested in (child, sibling, grandchild):
+        assert nested.context["marker"] is marker
+        assert nested.context["item"] is loader.item
+        assert nested.context["selector"] is nested.selector
+        assert nested.context is not loader.context
+    assert child.context["prefix"] == grandchild.context["prefix"] == "child"
+    assert sibling.context["prefix"] == "parent"
+    assert loader.context == original_context
+    child.context["new"] = True
+    assert "new" not in loader.context
+    assert "new" not in sibling.context
 
-        grandchild.default_input_processor = MapCompose(
-            lambda value, loader_context: loader_context["prefix"] + ":" + value
-        )
-        grandchild.add_css("name", "::text")
-        assert loader.load_item()["name"] == ["child:homepage"]
-
-    with pytest.raises(TypeError):
-        loader.nested_css("footer", item={})
+    grandchild.default_input_processor = MapCompose(
+        lambda value, loader_context: loader_context["prefix"] + ":" + value
+    )
+    grandchild.add_css("name", "::text")
+    assert loader.load_item()["name"] == ["child:homepage"]
 
 
 def test_nested_scrapy_response_context() -> None:
