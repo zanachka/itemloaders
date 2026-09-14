@@ -193,11 +193,7 @@ class ItemLoader:
         return self.__class__(item=self.item, parent=self, **context)
 
     def _get_nested_context(self, context: dict[str, Any]) -> dict[str, Any]:
-        inherited = {
-            key: value
-            for key, value in self.context.items()
-            if key != "item"
-        }
+        inherited = {key: value for key, value in self.context.items() if key != "item"}
         inherited.update(context)
         return inherited
 

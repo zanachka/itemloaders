@@ -149,18 +149,20 @@ def test_nested_context_inheritance(method: str, expression: str) -> None:
     assert loader.load_item()["name"] == ["child:homepage"]
 
 
-def test_nested_scrapy_response_context() -> None:
+@pytest.mark.parametrize(
+    ("method", "expression"), [("nested_xpath", "//div"), ("nested_css", "div")]
+)
+def test_nested_scrapy_response_context(method: str, expression: str) -> None:
     scrapy_loader = pytest.importorskip("scrapy.loader")
     scrapy_http = pytest.importorskip("scrapy.http")
     response = scrapy_http.HtmlResponse(
         url="https://example.com/", body=b'<div><a href="/target">link</a></div>'
     )
     loader = scrapy_loader.ItemLoader(item={}, response=response)
-    for method, expression in [("nested_xpath", "//div"), ("nested_css", "div")]:
-        nested = getattr(loader, method)(expression)
-        nested.default_input_processor = MapCompose(
-            lambda value, loader_context: loader_context["response"].urljoin(value)
-        )
-        nested.add_css(method, "a::attr(href)")
-        assert nested.context["response"] is response
-        assert loader.load_item()[method] == ["https://example.com/target"]
+    nested = getattr(loader, method)(expression)
+    nested.default_input_processor = MapCompose(
+        lambda value, loader_context: loader_context["response"].urljoin(value)
+    )
+    nested.add_css(method, "a::attr(href)")
+    assert nested.context["response"] is response
+    assert loader.load_item()[method] == ["https://example.com/target"]
