@@ -43,3 +43,8 @@ Example::
 You can nest loaders arbitrarily and they work with either xpath or css selectors.
 As a general guideline, use nested loaders when they make your code simpler but do
 not go overboard with nesting or your parser can become difficult to read.
+
+.. versionchanged:: VERSION
+
+   Nested loaders inherit the parent's processor context, with explicit keyword
+   arguments taking precedence.

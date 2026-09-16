@@ -173,6 +173,7 @@ class ItemLoader:
         self._check_selector_method()
         assert self.selector is not None
         selector = self.selector.xpath(xpath)
+        context = self._get_nested_context(context)
         context.update(selector=selector)
         return self.__class__(item=self.item, parent=self, **context)
 
@@ -187,8 +188,14 @@ class ItemLoader:
         self._check_selector_method()
         assert self.selector is not None
         selector = self.selector.css(css)
+        context = self._get_nested_context(context)
         context.update(selector=selector)
         return self.__class__(item=self.item, parent=self, **context)
+
+    def _get_nested_context(self, context: dict[str, Any]) -> dict[str, Any]:
+        inherited = {key: value for key, value in self.context.items() if key != "item"}
+        inherited.update(context)
+        return inherited
 
     def add_value(
         self,
