@@ -6,6 +6,8 @@ import platform
 import sys
 from typing import Any
 
+import pytest
+
 from itemloaders.utils import get_func_args
 
 
@@ -68,3 +70,20 @@ def test_partial_argument_values_are_not_parameter_names():
     assert get_func_args(functools.partial(function, "loader_context")) == [
         "loader_context"
     ]
+
+
+def test_get_func_args_not_callable():
+    with pytest.raises(TypeError):
+        get_func_args("not a callable")  # type: ignore[arg-type]
+
+
+def test_get_func_args_without_signature():
+    class Unintrospectable:
+        @property
+        def __signature__(self):
+            raise ValueError
+
+        def __call__(self, a):
+            pass
+
+    assert get_func_args(Unintrospectable()) == []
