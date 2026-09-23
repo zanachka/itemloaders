@@ -15,6 +15,14 @@ class DefaultedItemLoader(ItemLoader):
     default_input_processor = MapCompose(lambda v: v[:-1])
 
 
+def strip_values(values):
+    return [value.strip() for value in values]
+
+
+class FunctionProcessorItemLoader(ItemLoader):
+    name_in = strip_values
+
+
 # test processors
 def processor_with_args(value, other=None, loader_context=None):
     if "key" in loader_context:
@@ -37,6 +45,12 @@ class TestItemLoaderBasic:
         il.add_value("name", "marta")
         item = il.load_item()
         assert item["name"] == ["Marta"]
+
+    def test_load_item_using_function_processor(self):
+        il = FunctionProcessorItemLoader()
+        il.add_value("name", " marta ")
+        item = il.load_item()
+        assert item["name"] == ["marta"]
 
     def test_load_item_ignore_none_field_values(self):
         def validate_sku(value):
